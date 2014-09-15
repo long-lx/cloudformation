@@ -1,7 +1,7 @@
 {
   "AWSTemplateFormatVersion" : "2010-09-09",
 
-  "Description" : "AWS CloudFormation Sample Template EC2_Single_Instance: Create a single EC2 instance. **WARNING** This template creates an Amazon EC2 instance. You will be billed for the AWS resources used if you create a stack from this template.",
+  "Description" : "AWS CloudFormation Template EC2_RDS: Create 01 EC2, 01 RDS instance with basic setting",
 
   "Parameters" : {
 
@@ -23,7 +23,7 @@
     },
  
     "DBName": {
-      	"Default": "pyxis",
+    "Default": "pyxis",
 	"Description" : "MySQL database name",
 	"Type": "String",
 	"MinLength": "1",
@@ -84,7 +84,6 @@
       "AllowedValues" : [ "t1.micro", "m1.small", "m1.large", "m1.xlarge", "m2.xlarge", "m2.2xlarge", "m2.4xlarge", "c1.medium", "c1.xlarge" ],
       "ConstraintDescription" : "must be a valid EC2 instance type."
     }
-
   },
 
   "Mappings" : {
@@ -111,7 +110,7 @@
   },
 
   "Resources" : {
-
+  
     "EIP": {
     	"Type" : "AWS::EC2::EIP",
    	"Properties" : {
@@ -123,6 +122,26 @@
     "WebServer": {
       "Type": "AWS::EC2::Instance",
 
+	  "Metadata" : {
+        "Comment1" : "Configure the bootstrap helpers to install the Apache Web Server and PHP",
+        "Comment2" : "The website content is downloaded from the CloudFormationPHPSample.zip file",
+
+        "AWS::CloudFormation::Init" : {
+          "config" : {
+            "packages" : {
+              "yum" : {
+                "mysql"        : [],
+                "mysql-server" : [],
+                "mysql-libs"   : [],
+                "httpd"        : [],
+                "php"          : [],
+                "php-mysql"    : []
+              }
+            },
+          }
+        }
+      },
+	  
       "Properties": {
         "ImageId" : { "Fn::FindInMap" : [ "AWSRegionArch2AMI", { "Ref" : "AWS::Region" },
                           { "Fn::FindInMap" : [ "AWSInstanceType2Arch", { "Ref" : "InstanceType" }, "Arch" ] } ] },
@@ -130,11 +149,17 @@
         "SecurityGroupIds" : [ {"Ref" : "WebServerSecurityGroup"} ],
         "KeyName"        : { "Ref" : "KeyName" },
         "SubnetId" : "subnet-5966561f",
-	"Tags" : [ { "Key" : "Name", "Value" : { "Ref" : "EC2Name" } } ]
+		"Tags" : [ { "Key" : "Name", "Value" : { "Ref" : "EC2Name" } } ],
+		"UserData"       : { "Fn::Base64" : { "Fn::Join" : ["", [
+          "#!/bin/bash -v\n",
+          "yum update -y aws-cfn-bootstrap\n",
 
+          "# Install LAMP packages\n",
+          "/opt/aws/bin/cfn-init -s ", { "Ref" : "AWS::StackName" }, " -r WebServer ",
+          "    --region ", { "Ref" : "AWS::Region" }, " || error_exit 'Failed to run cfn-init'\n"
+		  ]]}}
       }
     },
-
 
     "WebServerSecurityGroup" : {
       "Type" : "AWS::EC2::SecurityGroup",
@@ -142,6 +167,7 @@
         "GroupDescription" : "Enable HTTP access via port 80",
         "SecurityGroupIngress" : [
           {"IpProtocol" : "tcp", "FromPort" : "80", "ToPort" : "80", "CidrIp" : "0.0.0.0/0"},
+		  {"IpProtocol" : "tcp", "FromPort" : "443", "ToPort" : "443", "CidrIp" : "0.0.0.0/0"},
           {"IpProtocol" : "tcp", "FromPort" : "22", "ToPort" : "22", "CidrIp" : "0.0.0.0/0"}
         ],
         "VpcId" : "vpc-f4f2e896",
@@ -153,9 +179,9 @@
       "Type": "AWS::RDS::DBSecurityGroup",
       "Properties": {
         "GroupDescription": "Grant database access to web server",
-	"EC2VpcId" : "vpc-f4f2e896",
+		"EC2VpcId" : "vpc-f4f2e896",
         "DBSecurityGroupIngress": {
-          "EC2SecurityGroupId": { "Ref": "WebServerSecurityGroup" }
+        "EC2SecurityGroupId": { "Ref": "WebServerSecurityGroup" }
         }
       }
     },
@@ -164,16 +190,16 @@
       "Type": "AWS::RDS::DBInstance",
       "Properties": {
         "Engine" : "MySQL",
-	"EngineVersion" : "5.5",
+		"EngineVersion" : "5.5",
         "DBName" : { "Ref": "DBName" },
-	"BackupRetentionPeriod" : "0",
-	"DBInstanceIdentifier" : "pyxis",
-	"DBParameterGroupName" : "pyxis-pro",
+		"BackupRetentionPeriod" : "0",
+		"DBInstanceIdentifier" : "pyxis",
+		"DBParameterGroupName" : "pyxis-pro",
         "MultiAZ" : { "Ref": "MultiAZDatabase" },
         "MasterUsername": { "Ref": "DBUsername" },
         "MasterUserPassword": { "Ref" : "DBPassword" },
         "DBInstanceClass": { "Ref" : "DBInstanceClass" },
-	"DBSubnetGroupName": "dev-db",
+		"DBSubnetGroupName": "dev-db",
         "DBSecurityGroups": [ { "Ref": "DBSecurityGroup" } ],
         "AllocatedStorage": { "Ref" : "DBAllocatedStorage" }
       }
