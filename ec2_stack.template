@@ -100,7 +100,7 @@
     },
     "AWSRegionArch2AMI" : {
       "us-east-1"      : { "32" : "ami-7f418316", "64" : "ami-7341831a" },
-      "us-west-1"      : { "32" : "ami-951945d0", "64" : "ami-b53f36f0" },
+      "us-west-1"      : { "32" : "ami-951945d0", "64" : "ami-7dc5cc38" },
       "us-west-2"      : { "32" : "ami-16fd7026", "64" : "ami-10fd7020" },
       "eu-west-1"      : { "32" : "ami-24506250", "64" : "ami-b53f36f0" },
       "sa-east-1"      : { "32" : "ami-3e3be423", "64" : "ami-3c3be421" },
@@ -135,7 +135,8 @@
                 "mysql-libs"   : [],
                 "httpd"        : [],
                 "php"          : [],
-                "php-mysql"    : []
+                "php-mysql"    : [],
+				"nginx"		   : []
               }
             }
           }
