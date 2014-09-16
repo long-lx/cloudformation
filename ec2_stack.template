@@ -100,7 +100,7 @@
     },
     "AWSRegionArch2AMI" : {
       "us-east-1"      : { "32" : "ami-7f418316", "64" : "ami-7341831a" },
-      "us-west-1"      : { "32" : "ami-951945d0", "64" : "ami-ebdfd6ae" },
+      "us-west-1"      : { "32" : "ami-951945d0", "64" : "ami-7dc5cc38" },
       "us-west-2"      : { "32" : "ami-16fd7026", "64" : "ami-10fd7020" },
       "eu-west-1"      : { "32" : "ami-24506250", "64" : "ami-b53f36f0" },
       "sa-east-1"      : { "32" : "ami-3e3be423", "64" : "ami-3c3be421" },
@@ -152,7 +152,9 @@
 		"Tags" : 			[ { "Key" : "Name", "Value" : { "Ref" : "EC2Name" } } ],
 		"UserData"       : { "Fn::Base64" : { "Fn::Join" : ["", [
           "#!/bin/bash -v\n",
-          "yum update -y aws-cfn-bootstrap\n",
+		  "yum install pystache\n",
+		  "yum install python-daemon\n",
+          "rpm -Uvh https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.amzn1.noarch.rpm",
 
           "# Install LAMP packages\n",
           "/opt/aws/bin/cfn-init -s ", { "Ref" : "AWS::StackName" }, " -r WebServer ",
