@@ -82,7 +82,19 @@
                 "php-mysql"    : [],
 				"nginx"		   : []
               }
-            }
+            },
+			
+			"services" : {
+              "sysvinit" : {
+                "httpd" : {
+                  "enabled"       : "true",
+                  "ensureRunning" : "true"
+                },
+				"nginx" : {
+				  "enable"		  : "true",
+				  "ensureRunning" : "true"
+				}
+              }
           }
         }
       },
@@ -97,10 +109,7 @@
 		"Tags" : 			[ { "Key" : "Name", "Value" : { "Ref" : "EC2Name" } } ],
 		"UserData"       : { "Fn::Base64" : { "Fn::Join" : ["", [
           "#!/bin/bash -v\n",
-		  "yum install pystache",
-		  "yum install python-daemon",
-          "rpm -Uvh https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.amzn1.noarch.rpm",
-
+		 
           "# Install LAMP packages\n",
           "/opt/aws/bin/cfn-init -s ", { "Ref" : "AWS::StackName" }, " -r WebServer ",
           "    --region ", { "Ref" : "AWS::Region" }, " || error_exit 'Failed to run cfn-init'\n"
