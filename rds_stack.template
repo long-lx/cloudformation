@@ -59,6 +59,7 @@
       "AllowedValues" : [ "true", "false" ],
       "ConstraintDescription" : "must be either true or false."
     }
+},
 
   "Resources" : { 
 
@@ -91,7 +92,7 @@
         "AllocatedStorage": { "Ref" : "DBAllocatedStorage" }
       }
     }
-  },
+ },
 
   "Outputs" : {
     "WebsiteURL" : {

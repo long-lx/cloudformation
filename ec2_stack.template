@@ -29,7 +29,7 @@
       "AllowedValues" : [ "t1.micro", "m1.small", "m1.large", "m1.xlarge", "m2.xlarge", "m2.2xlarge", "m2.4xlarge", "c1.medium", "c1.xlarge" ],
       "ConstraintDescription" : "must be a valid EC2 instance type."
     }
-  },
+},
 
   "Mappings" : {
     "AWSInstanceType2Arch" : {
@@ -52,7 +52,7 @@
       "ap-southeast-1" : { "32" : "ami-74dda626", "64" : "ami-7edda62c" },
       "ap-northeast-1" : { "32" : "ami-dcfa4edd", "64" : "ami-e8fa4ee9" }
     }
-  },
+},
 
   "Resources" : {
   
@@ -120,9 +120,8 @@
         "VpcId" : "vpc-f4f2e896",
 	"Tags" : [ { "Key" : "Name", "Value" : "Test_cf"} ]
       }
-    },
-
-  },
+    }
+},
 
   "Outputs" : {
     "WebsiteURL" : {
