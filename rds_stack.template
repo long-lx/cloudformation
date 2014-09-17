@@ -53,7 +53,7 @@
     },
 	
 	"DBSecurityGroupName": {
-	"Default": "DEV_DB_SG",
+	"Default": "DEVDBSG",
 	"Description" : "DB SecurityGroup for RDS instance",
 	"Type": "String",
 	"MinLength": "1",
