@@ -1,0 +1,102 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+
+  "Description" : "AWS CloudFormation Template EC2_RDS: Create 01 EC2, 01 RDS instance with basic setting",
+
+  "Parameters" : {
+
+    "DBName": {
+    "Default": "pyxis",
+	"Description" : "MySQL database name",
+	"Type": "String",
+	"MinLength": "1",
+	"MaxLength": "64",
+	"AllowedPattern" : "[a-zA-Z][a-zA-Z0-9]*",
+	"ConstraintDescription" : "must begin with a letter and contain only alphanumeric characters"
+    },
+
+    "DBUsername": {
+	"NoEcho": "true",
+	"Description" : "User name for MySQL database access",
+	"Type": "String",
+	"MinLength": "1",
+	"MaxLength": "16",
+	"AllowedPattern" : "[a-zA-Z][a-zA-Z0-9]*",
+	"ConstraintDescription" : "must begin with a letter and contain only alphanumeric characters."
+    },
+
+    "DBPassword": {
+	"NoEcho": "true",
+	"Description" : "Password for MySQL database access",
+      	"Type": "String",
+      	"MinLength": "8",
+      	"MaxLength": "41",
+      	"AllowedPattern" : "[a-zA-Z0-9]*",
+      	"ConstraintDescription" : "must contain only alphanumeric characters."
+    },
+
+    "DBAllocatedStorage": {
+      "Default": "5",
+      "Description" : "The size of the database (Gb)",
+      "Type": "Number",
+      "MinValue": "5",
+      "MaxValue": "1024",
+      "ConstraintDescription" : "must be between 5 and 1024Gb."
+    },
+
+    "DBInstanceClass": {
+      "Default": "db.t1.micro",
+      "Description" : "The database instance type",
+      "Type": "String",
+      "AllowedValues" : [ "db.t1.micro", "db.m1.small", "db.m1.large", "db.m1.xlarge", "db.m2.xlarge", "db.m2.2xlarge", "db.m2.4xlarge" ],
+      "ConstraintDescription" : "must select a valid database instance type."
+    },
+
+    "MultiAZDatabase": {
+      "Default": "false",
+      "Description" : "Create a multi-AZ MySQL Amazon RDS database instance",
+      "Type": "String",
+      "AllowedValues" : [ "true", "false" ],
+      "ConstraintDescription" : "must be either true or false."
+    }
+
+  "Resources" : { 
+
+    "DBSecurityGroup": {
+      "Type": "AWS::RDS::DBSecurityGroup",
+      "Properties": {
+        "GroupDescription": "Grant database access to web server",
+		"EC2VpcId" : "vpc-f4f2e896",
+        "DBSecurityGroupIngress": {
+        "EC2SecurityGroupId": { "Ref": "WebServerSecurityGroup" }
+        }
+      }
+    },
+
+    "MySQLDatabase": {
+      "Type": "AWS::RDS::DBInstance",
+      "Properties": {
+        "Engine" : "MySQL",
+		"EngineVersion" : "5.5",
+        "DBName" : { "Ref": "DBName" },
+		"BackupRetentionPeriod" : "0",
+		"DBInstanceIdentifier" : "pyxis",
+		"DBParameterGroupName" : "pyxis-pro",
+        "MultiAZ" : { "Ref": "MultiAZDatabase" },
+        "MasterUsername": { "Ref": "DBUsername" },
+        "MasterUserPassword": { "Ref" : "DBPassword" },
+        "DBInstanceClass": { "Ref" : "DBInstanceClass" },
+		"DBSubnetGroupName": "dev-db",
+        "DBSecurityGroups": [ { "Ref": "DBSecurityGroup" } ],
+        "AllocatedStorage": { "Ref" : "DBAllocatedStorage" }
+      }
+    }
+  },
+
+  "Outputs" : {
+    "WebsiteURL" : {
+      "Value" : { "Fn::Join" : ["", ["http://", { "Fn::GetAtt" : [ "WebServer", "PublicDnsName" ]}]] },
+      "Description" : "URL for newly created EC2 Instance"
+    }
+  }
+}
