@@ -34,12 +34,12 @@
 
     "DBUsername": {
 	"NoEcho": "true",
-	"Description" : "Username for MySQL database access",
+	"Description" : "User name for MySQL database access",
 	"Type": "String",
 	"MinLength": "1",
 	"MaxLength": "16",
 	"AllowedPattern" : "[a-zA-Z][a-zA-Z0-9]*",
-	"ConstraintDescription" : "must begin with a letter and contain only alphanumberic characters."
+	"ConstraintDescription" : "must begin with a letter and contain only alphanumeric characters."
     },
 
     "DBPassword": {
@@ -152,8 +152,8 @@
 		"Tags" : 			[ { "Key" : "Name", "Value" : { "Ref" : "EC2Name" } } ],
 		"UserData"       : { "Fn::Base64" : { "Fn::Join" : ["", [
           "#!/bin/bash -v\n",
-		  "yum install pystache\n",
-		  "yum install python-daemon\n",
+		  "yum install pystache",
+		  "yum install python-daemon",
           "rpm -Uvh https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.amzn1.noarch.rpm",
 
           "# Install LAMP packages\n",
