@@ -106,7 +106,7 @@
 
   "Outputs" : {
     "WebsiteURL" : {
-      "Value" : { "Fn::Join" : ["", ["http://", { "Fn::GetAtt" : [ "MySQLDatabase", "DnsName" ]}]] },
+      "Value" : { "Fn::Join" : ["", ["http://", { "Fn::GetAtt" : [ "MySQLDatabase", "Endpoint.Address" ]}]] },
       "Description" : "URL for newly created EC2 Instance"
     }
   }
