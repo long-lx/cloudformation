@@ -52,7 +52,7 @@
       "ConstraintDescription" : "must select a valid database instance type."
     },
 	
-	"EC2SecurityGroupName": {
+	"EC2SGName": {
 	"Default": "DEVDBSG",
 	"Description" : "DB SecurityGroup for RDS instance",
 	"Type": "String",
@@ -79,7 +79,7 @@
         "GroupDescription": "Grant database access to web server",
 		"EC2VpcId" : "vpc-f4f2e896",
         "DBSecurityGroupIngress": {
-        "EC2SecurityGroupId": { "Ref": "EC2SecurityGroupName" }
+        "EC2SecurityGroupId": { "Ref": "EC2SGName" }
         }
       }
     },
