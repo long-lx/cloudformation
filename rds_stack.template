@@ -1,7 +1,7 @@
 {
   "AWSTemplateFormatVersion" : "2010-09-09",
 
-  "Description" : "AWS CloudFormation Template EC2_RDS: Create 01 EC2, 01 RDS instance with basic setting",
+  "Description" : "AWS CloudFormation Template RDS: Create a RDS instance with basic setting",
 
   "Parameters" : {
 

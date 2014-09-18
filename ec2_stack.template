@@ -1,7 +1,7 @@
 {
   "AWSTemplateFormatVersion" : "2010-09-09",
 
-  "Description" : "AWS CloudFormation Template EC2_RDS: Create 01 EC2, 01 RDS instance with basic setting",
+  "Description" : "AWS CloudFormation Template EC2 : Create a EC2 instance with basic setting",
 
   "Parameters" : {
 
@@ -26,7 +26,7 @@
       "Description" : "WebServer EC2 instance type",
       "Type" : "String",
       "Default" : "t1.micro",
-      "AllowedValues" : [ "t1.micro", "m1.small", "m1.large", "m1.xlarge", "m2.xlarge", "m2.2xlarge", "m2.4xlarge", "c1.medium", "c1.xlarge" ],
+      "AllowedValues" : [ "t1.micro", "m1.small", "m1.large", "m1.xlarge", "m2.xlarge", "m3.medium", "m3.xlarge", "m3.large", "c3.large", "c3.xlarge" ],
       "ConstraintDescription" : "must be a valid EC2 instance type."
     }
 },
@@ -34,23 +34,18 @@
   "Mappings" : {
     "AWSInstanceType2Arch" : {
       "t1.micro"    : { "Arch" : "64" },
-      "m1.small"    : { "Arch" : "32" },
-      "m1.large"    : { "Arch" : "64" },
+      "m1.small"    : { "Arch" : "64" },
+	  "m1.large"    : { "Arch" : "64" },
       "m1.xlarge"   : { "Arch" : "64" },
       "m2.xlarge"   : { "Arch" : "64" },
-      "m2.2xlarge"  : { "Arch" : "64" },
-      "m2.4xlarge"  : { "Arch" : "64" },
-      "c1.medium"   : { "Arch" : "32" },
-      "c1.xlarge"   : { "Arch" : "64" }
+	  "m3.medium"	: { "Arch" : "64" },
+	  "m3.large"	: { "Arch" : "64" },
+	  "m3.xlarge"	: { "Arch" : "64" },
+      "c3.large"    : { "Arch" : "64" },
+	  "c3.xlarge"   : { "Arch" : "64" }
     },
     "AWSRegionArch2AMI" : {
-      "us-east-1"      : { "32" : "ami-7f418316", "64" : "ami-7341831a" },
-      "us-west-1"      : { "32" : "ami-951945d0", "64" : "ami-ebdfd6ae" },
-      "us-west-2"      : { "32" : "ami-16fd7026", "64" : "ami-10fd7020" },
-      "eu-west-1"      : { "32" : "ami-24506250", "64" : "ami-b53f36f0" },
-      "sa-east-1"      : { "32" : "ami-3e3be423", "64" : "ami-3c3be421" },
-      "ap-southeast-1" : { "32" : "ami-74dda626", "64" : "ami-7edda62c" },
-      "ap-northeast-1" : { "32" : "ami-dcfa4edd", "64" : "ami-e8fa4ee9" }
+      "us-west-1"      : { "32" : "ami-951945d0", "64" : "ami-ebdfd6ae" }
     }
 },
 
@@ -134,9 +129,9 @@
 },
 
   "Outputs" : {
-    "WebsiteURL" : {
-      "Value" : { "Fn::Join" : ["", ["http://", { "Fn::GetAtt" : [ "WebServer", "PublicDnsName" ]}]] },
-      "Description" : "URL for newly created EC2 Instance"
+    "WebEIP" : {
+      "Value" : { "Fn::Join" : ["", { "Fn::GetAtt" : [ "EIP", "PublicIp" ]}] },
+      "Description" : "EIP for newly created EC2 Instance"
     }
   }
 }
