@@ -23,7 +23,7 @@
     },
    
     "InstanceType" : {
-      "Description" : "WebServer EC2 instance type",
+      "Description" : "EC2Instance EC2 instance type",
       "Type" : "String",
       "Default" : "t1.micro",
       "AllowedValues" : [ "t1.micro", "m1.small", "m1.large", "m1.xlarge", "m2.xlarge", "m3.medium", "m3.xlarge", "m3.large", "c3.large", "c3.xlarge" ],
@@ -54,12 +54,12 @@
     "EIP": {
     	"Type" : "AWS::EC2::EIP",
    	"Properties" : {
-      	"InstanceId" : { "Ref" : "WebServer" },
+      	"InstanceId" : { "Ref" : "EC2Instance" },
       	"Domain" : "vpc"
    }
    },
   
-    "WebServer": {
+    "EC2Instance": {
       "Type": "AWS::EC2::Instance",
 
 	  "Metadata" : {
@@ -99,7 +99,7 @@
         "ImageId" : 		{ "Fn::FindInMap" : [ "AWSRegionArch2AMI", { "Ref" : "AWS::Region" },
 								{ "Fn::FindInMap" : [ "AWSInstanceType2Arch", { "Ref" : "InstanceType" }, "Arch" ] } ] },
         "InstanceType"   : 	{ "Ref" : "InstanceType" },
-        "SecurityGroupIds" : [ {"Ref" : "WebServerSecurityGroup"} ],
+        "SecurityGroupIds" : [ {"Ref" : "EC2InstanceSecurityGroup"} ],
         "KeyName"        : { "Ref" : "KeyName" },
         "SubnetId" : 		"subnet-5966561f",
 		"Tags" : 			[ { "Key" : "Name", "Value" : { "Ref" : "EC2Name" } } ],
@@ -107,13 +107,13 @@
           "#!/bin/bash -v\n",
 		 
           "# Install LAMP packages\n",
-          "/opt/aws/bin/cfn-init -s ", { "Ref" : "AWS::StackName" }, " -r WebServer ",
+          "/opt/aws/bin/cfn-init -s ", { "Ref" : "AWS::StackName" }, " -r EC2Instance ",
           "    --region ", { "Ref" : "AWS::Region" }, " || error_exit 'Failed to run cfn-init'\n"
 		  ]]}}
       }
     },
 
-    "WebServerSecurityGroup" : {
+    "EC2InstanceSecurityGroup" : {
       "Type" : "AWS::EC2::SecurityGroup",
       "Properties" : {
         "GroupDescription" : "Enable HTTP access via port 80",
@@ -130,7 +130,7 @@
 
   "Outputs" : {
     "WebEIP" : {
-      "Value" : { "Fn::Join" : ["", { "Fn::GetAtt" : [ "EIP", "PublicIp" ]}] },
+      "Value" : { "Fn::Join" : ["", { "Fn::GetAtt" : [ "EC2Instance", "PublicIp" ]}] },
       "Description" : "EIP for newly created EC2 Instance"
     }
   }
