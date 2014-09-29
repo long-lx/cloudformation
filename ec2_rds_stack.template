@@ -209,9 +209,13 @@
 },
 
   "Outputs" : {
-    "WebsiteURL" : {
-      "Value" : { "Fn::Join" : ["", ["http://", { "Fn::GetAtt" : [ "WebServer", "PublicDnsName" ]}]] },
-      "Description" : "URL for newly created EC2 Instance"
+    "PublicIp" : {
+      "Value" : { "Fn::Join" : ["", [{ "Fn::GetAtt" : [ "EC2Instance", "PublicIp" ]}]] },
+      "Description" : "EIP for newly created EC2 Instance"
+    },
+	"RdsEndpoint" : {
+      "Value" : { "Fn::Join" : ["", { "Fn::GetAtt" : [ "MySQLDatabase", "Endpoint.Address" ]}] },
+      "Description" : "URL for newly created RDS Instance"
     }
   }
 }
