@@ -63,14 +63,13 @@
       "Type": "AWS::EC2::Instance",
 
 	  "Metadata" : {
-        "Comment1" : "Configure the bootstrap helpers to install the Apache Web Server and PHP",
+        "Comment" : "Configure the bootstrap helpers to install the httpd, nginx, php",
 
         "AWS::CloudFormation::Init" : {
           "config" : {
             "packages" : {
               "yum" : {
                 "mysql"        : [],
-                "mysql-server" : [],
                 "mysql-libs"   : [],
                 "httpd"        : [],
                 "php"          : [],
@@ -112,7 +111,7 @@
 		"UserData"       : { "Fn::Base64" : { "Fn::Join" : ["", [
           "#!/bin/bash -v\n",
 		 
-          "# Install LAMP packages\n",
+          "# Install packages\n",
           "/opt/aws/bin/cfn-init -s ", { "Ref" : "AWS::StackName" }, " -r EC2Instance ",
           "    --region ", { "Ref" : "AWS::Region" }, " || error_exit 'Failed to run cfn-init'\n"
 		  ]]}}
@@ -129,7 +128,7 @@
           {"IpProtocol" : "tcp", "FromPort" : "22", "ToPort" : "22", "CidrIp" : "0.0.0.0/0"}
         ],
         "VpcId" : "vpc-f4f2e896",
-	"Tags" : [ { "Key" : "Name", "Value" : "Test_cf"} ]
+	  "Tags" : [ { "Key" : "Name", "Value" : "Test_cf"} ]
       }
     }
 },
