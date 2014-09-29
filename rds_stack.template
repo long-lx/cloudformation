@@ -106,7 +106,7 @@
 
   "Outputs" : {
     "RdsEndpoint" : {
-      "Value" : { "Fn::Join" : ["", { "Fn::GetAtt" : [ "MySQLDatabase", "Endpoint.Address" ]}] },
+      "Value" : { "Fn::Join" : ["", [{ "Fn::GetAtt" : [ "MySQLDatabase", "Endpoint.Address" ]}]] },
       "Description" : "URL for newly created RDS Instance"
     }
   }
