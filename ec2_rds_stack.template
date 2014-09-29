@@ -114,12 +114,12 @@
     "EIP": {
     	"Type" : "AWS::EC2::EIP",
    	"Properties" : {
-      	"InstanceId" : { "Ref" : "WebServer" },
+      	"InstanceId" : { "Ref" : "EC2Instance" },
       	"Domain" : "vpc"
    }
    },
   
-    "WebServer": {
+    "EC2Instance": {
       "Type": "AWS::EC2::Instance",
 
 	  "Metadata" : {
