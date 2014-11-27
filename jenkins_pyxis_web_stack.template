@@ -148,7 +148,7 @@
         "MasterUserPassword": { "Ref" : "DBPassword" },
         "DBInstanceClass": { "Ref" : "DBInstanceClass" },
 		"DBSubnetGroupName": "dev-db-sg",
-        "VPCSecurityGroups": [ "dev_db_sg" ],
+        "VPCSecurityGroups": [ "sg-43ea2226" ],
         "AllocatedStorage": { "Ref" : "DBAllocatedStorage" }
       }
     }
