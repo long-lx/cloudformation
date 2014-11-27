@@ -1,0 +1,163 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+
+  "Description" : "AWS CloudFormation Template EC2_RDS: Create 01 EC2, 01 RDS instance with basic setting",
+
+  "Parameters" : {
+
+    "KeyName" : {
+      "Description" : "Name of an existing EC2 KeyPair to enable SSH access to the instances",
+      "Type" : "String",
+      "MinLength": "1",
+      "MaxLength": "64",
+      "AllowedPattern" : "[-_ a-zA-Z0-9]*",
+      "ConstraintDescription" : "can contain only alphanumeric characters, spaces, dashes and underscores."
+    },
+
+    "EC2Name" : {
+	"Description" : "Name of EC2 instances",
+	"Type" : "String",
+	"MinLength": "1",
+	"MaxLength": "64",
+	"ConstraintDescription" : "Can contain only alphanumeric characters, spaces, dashes and underscores."
+    },
+ 
+    "DBName": {
+    "Default": "pyxis",
+	"Description" : "Pyxis dev MySQL database name",
+	"Type": "String",
+	"MinLength": "1",
+	"MaxLength": "64",
+	"AllowedPattern" : "[a-zA-Z][a-zA-Z0-9]*",
+	"ConstraintDescription" : "must begin with a letter and contain only alphanumeric characters"
+    },
+
+    "DBUsername": {
+	"NoEcho": "true",
+	"Description" : "User name for MySQL database access",
+	"Type": "String",
+	"MinLength": "1",
+	"MaxLength": "16",
+	"AllowedPattern" : "[a-zA-Z][a-zA-Z0-9]*",
+	"ConstraintDescription" : "must begin with a letter and contain only alphanumeric characters."
+    },
+
+    "DBPassword": {
+	"NoEcho": "true",
+	"Description" : "Password for MySQL database access",
+      	"Type": "String",
+      	"MinLength": "8",
+      	"MaxLength": "41",
+      	"AllowedPattern" : "[a-zA-Z0-9]*",
+      	"ConstraintDescription" : "must contain only alphanumeric characters."
+    },
+
+    "DBAllocatedStorage": {
+      "Default": "5",
+      "Description" : "The size of the database (Gb)",
+      "Type": "Number",
+      "MinValue": "5",
+      "MaxValue": "1024",
+      "ConstraintDescription" : "must be between 5 and 1024Gb."
+    },
+
+    "DBInstanceClass": {
+      "Default": "db.m1.small",
+      "Description" : "The database instance type",
+      "Type": "String",
+      "AllowedValues" : [ "db.t1.micro", "db.m1.small", "db.m1.large", "db.m1.xlarge", "db.m2.xlarge", "db.m2.2xlarge", "db.m2.4xlarge" ],
+      "ConstraintDescription" : "must select a valid database instance type."
+    },
+
+    "MultiAZDatabase": {
+      "Default": "false",
+      "Description" : "Create a multi-AZ MySQL Amazon RDS database instance",
+      "Type": "String",
+      "AllowedValues" : [ "true", "false" ],
+      "ConstraintDescription" : "must be either true or false."
+    },
+   
+    "InstanceType" : {
+      "Description" : "WebServer EC2 instance type",
+      "Type" : "String",
+      "Default" : "t1.micro",
+      "AllowedValues" : [ "t1.micro", "m1.small", "m1.large", "m1.xlarge", "m2.xlarge", "m2.2xlarge", "m2.4xlarge", "c1.medium", "c1.xlarge" ],
+      "ConstraintDescription" : "must be a valid EC2 instance type."
+    }
+},
+
+  "Mappings" : {
+    "AWSInstanceType2Arch" : {
+      "t1.micro"    : { "Arch" : "64" },
+      "m1.small"    : { "Arch" : "32" },
+      "m1.large"    : { "Arch" : "64" },
+      "m1.xlarge"   : { "Arch" : "64" },
+      "m2.xlarge"   : { "Arch" : "64" },
+      "m2.2xlarge"  : { "Arch" : "64" },
+      "m2.4xlarge"  : { "Arch" : "64" },
+      "c1.medium"   : { "Arch" : "32" },
+      "c1.xlarge"   : { "Arch" : "64" }
+    },
+    "AWSRegionArch2AMI" : {
+      "us-east-1"      : { "32" : "ami-7f418316", "64" : "ami-7341831a" },
+      "us-west-1"      : { "32" : "ami-951945d0", "64" : "ami-993b2bdc" },
+      "us-west-2"      : { "32" : "ami-16fd7026", "64" : "ami-10fd7020" },
+      "eu-west-1"      : { "32" : "ami-24506250", "64" : "ami-b53f36f0" },
+      "sa-east-1"      : { "32" : "ami-3e3be423", "64" : "ami-3c3be421" },
+      "ap-southeast-1" : { "32" : "ami-74dda626", "64" : "ami-7edda62c" },
+      "ap-northeast-1" : { "32" : "ami-dcfa4edd", "64" : "ami-e8fa4ee9" }
+    }
+},
+
+  "Resources" : {
+  
+    "EIP": {
+    	"Type" : "AWS::EC2::EIP",
+   	"Properties" : {
+      	"InstanceId" : { "Ref" : "EC2Instance" },
+      	"Domain" : "vpc"
+   }
+   },
+  
+    "EC2Instance": {
+      "Type": "AWS::EC2::Instance",
+	  
+      "Properties": {
+        "ImageId" : 		{ "Fn::FindInMap" : [ "AWSRegionArch2AMI", { "Ref" : "AWS::Region" },
+								{ "Fn::FindInMap" : [ "AWSInstanceType2Arch", { "Ref" : "InstanceType" }, "Arch" ] } ] },
+        "InstanceType"   : 	{ "Ref" : "InstanceType" },
+        "SecurityGroupIds" : [ "sg-7dea2218", "sg-7ec7cc1c" ],
+		"PrivateIpAddress" : "10.0.13.42",
+        "KeyName"        : { "Ref" : "KeyName" },
+        "SubnetId" : 		"subnet-46ebe700",
+		"Tags" : 			[ { "Key" : "Name", "Value" : { "Ref" : "EC2Name" } } ]
+      }
+    },
+
+    "MySQLDatabase": {
+      "Type": "AWS::RDS::DBInstance",
+      "Properties": {
+        "Engine" : "MySQL",
+		"EngineVersion" : "5.5",
+        "DBName" : { "Ref": "DBName" },
+		"BackupRetentionPeriod" : "0",
+		"DBInstanceIdentifier" : "dev-pyxis",
+		"DBParameterGroupName" : "dev-pyxis",
+        "MultiAZ" : { "Ref": "MultiAZDatabase" },
+        "MasterUsername": { "Ref": "DBUsername" },
+        "MasterUserPassword": { "Ref" : "DBPassword" },
+        "DBInstanceClass": { "Ref" : "DBInstanceClass" },
+		"DBSubnetGroupName": "dev-db-sg",
+        "DBSecurityGroups": [ "sg-43ea2226" ],
+        "AllocatedStorage": { "Ref" : "DBAllocatedStorage" }
+      }
+    }
+},
+
+  "Outputs" : {
+	"RdsEndpoint" : {
+      "Value" : { "Fn::Join" : ["", [{ "Fn::GetAtt" : [ "MySQLDatabase", "Endpoint.Address" ]}]] },
+      "Description" : "URL for newly created RDS Instance"
+    }
+  }
+}
