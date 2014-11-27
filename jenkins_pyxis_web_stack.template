@@ -10,7 +10,7 @@
       "Type" : "String",
       "MinLength": "1",
       "MaxLength": "64",
-      "AllowedPattern" : "[-_ a-zA-Z0-9]*",
+      "AllowedPattern" : "[-_ a-zA-Z0-9.]*",
       "ConstraintDescription" : "can contain only alphanumeric characters, spaces, dashes and underscores."
     },
 
@@ -28,7 +28,7 @@
 	"Type": "String",
 	"MinLength": "1",
 	"MaxLength": "64",
-	"AllowedPattern" : "[a-zA-Z][a-zA-Z0-9]*",
+	"AllowedPattern" : "[a-zA-Z][a-zA-Z0-9.]*",
 	"ConstraintDescription" : "must begin with a letter and contain only alphanumeric characters"
     },
 
@@ -38,7 +38,7 @@
 	"Type": "String",
 	"MinLength": "1",
 	"MaxLength": "16",
-	"AllowedPattern" : "[a-zA-Z][a-zA-Z0-9]*",
+	"AllowedPattern" : "[a-zA-Z][a-zA-Z0-9.]*",
 	"ConstraintDescription" : "must begin with a letter and contain only alphanumeric characters."
     },
 
@@ -48,7 +48,7 @@
       	"Type": "String",
       	"MinLength": "8",
       	"MaxLength": "41",
-      	"AllowedPattern" : "[a-zA-Z0-9]*",
+      	"AllowedPattern" : "[a-zA-Z0-9.]*",
       	"ConstraintDescription" : "must contain only alphanumeric characters."
     },
 
