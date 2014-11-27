@@ -141,7 +141,7 @@
 		"EngineVersion" : "5.5",
         "DBName" : { "Ref": "DBName" },
 		"BackupRetentionPeriod" : "0",
-		"DBInstanceIdentifier" : "dev-pyxis",
+		"DBInstanceIdentifier" : "dev-pyxis-jenkins01",
 		"DBParameterGroupName" : "dev-pyxis",
         "MultiAZ" : { "Ref": "MultiAZDatabase" },
         "MasterUsername": { "Ref": "DBUsername" },
